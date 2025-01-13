@@ -66,9 +66,9 @@ jobs:
           curl -sL https://firebase.tools | bash
           export PATH=$PATH:$HOME/.firebase-tools
 
-#      - name: Upload APK to Firebase App Distribution
-#        run: |
-#          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-#            --app "app-unimarc-dev" \
-#            --groups "testers" \
-#            --token 1:788067465252:android:d603f91a8b50709e31c0b1
+      - name: Upload APK to Firebase App Distribution
+        run: |
+         firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+         --app "TestFirebase" \
+         --groups "testers" \
+         --token ${{ secrets.FIREBASE_TOKEN }}
