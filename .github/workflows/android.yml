@@ -58,20 +58,14 @@ jobs:
           path: ./local.properties
           key: ${{ runner.os }}-local-properties-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-#      - name: Read Firebase credentials from file
-#        run: |
-#          echo "::add-mask::$(cat ./config/firebase-credentials.json)"
-#          echo "FIREBASE_CREDENTIALS_JSON=$(cat app/src/debug/google-services.json)" >> GITHUB_ENV
-#          echo "FIREBASE_CLI_TOKEN=1:788067465252:android:04efbee113d0985b31c0b1" >> GITHUB_ENV
-#
-#      - name: build debug version
-#        run: ./gradlew assembleDebug
-#
-#      - name: Install Firebase CLI
-#        run: |
-#          curl -sL https://firebase.tools | bash
-#          export PATH=$PATH:$HOME/.firebase-tools
-#
+      - name: build debug version
+        run: ./gradlew assembleDebug
+
+      - name: Install Firebase CLI
+        run: |
+          curl -sL https://firebase.tools | bash
+          export PATH=$PATH:$HOME/.firebase-tools
+
 #      - name: Upload APK to Firebase App Distribution
 #        run: |
 #          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
