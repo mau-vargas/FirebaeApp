@@ -1,26 +1,80 @@
-name: Android CI
+name: Android CD
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
+  configuration:
+    runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache local.properties
+        uses: actions/cache@v4
+        with:
+          path: ./local.properties
+          key: ${{ runner.os }}-local-properties-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+  deploy:
+    runs-on: ubuntu-24.04
+    needs: configuration
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Restore local.properties from cache
+        uses: actions/cache@v4
+        with:
+          path: ./local.properties
+          key: ${{ runner.os }}-local-properties-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+#      - name: Read Firebase credentials from file
+#        run: |
+#          echo "::add-mask::$(cat ./config/firebase-credentials.json)"
+#          echo "FIREBASE_CREDENTIALS_JSON=$(cat app/src/debug/google-services.json)" >> GITHUB_ENV
+#          echo "FIREBASE_CLI_TOKEN=1:788067465252:android:04efbee113d0985b31c0b1" >> GITHUB_ENV
+#
+#      - name: build debug version
+#        run: ./gradlew assembleDebug
+#
+#      - name: Install Firebase CLI
+#        run: |
+#          curl -sL https://firebase.tools | bash
+#          export PATH=$PATH:$HOME/.firebase-tools
+#
+#      - name: Upload APK to Firebase App Distribution
+#        run: |
+#          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+#            --app "app-unimarc-dev" \
+#            --groups "testers" \
+#            --token 1:788067465252:android:d603f91a8b50709e31c0b1
