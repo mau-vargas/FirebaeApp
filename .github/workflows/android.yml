@@ -73,8 +73,9 @@ jobs:
       # Paso para configurar las credenciales de Google Cloud
       - name: Set up Google Cloud credentials
         run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > /tmp/firebase-service-account.json
-          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > service_credentials_content.json
+          export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
+
 
       # Instalar Firebase CLI
       - name: Install Firebase CLI
@@ -114,13 +115,6 @@ jobs:
           # Definición de variables
           RELEASE_NOTES=""
           RELEASE_NOTES_FILE=""
-
-
-          # Si se pasa el contenido de las credenciales, configurarlo
-          if [ -n "${INPUT_SERVICECREDENTIALSFILECONTENT}" ] ; then
-              cat <<< "${INPUT_SERVICECREDENTIALSFILECONTENT}" > service_credentials_content.json
-              export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
-          fi
 
 
           # Distribuir la app
