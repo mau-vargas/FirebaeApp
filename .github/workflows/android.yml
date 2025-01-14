@@ -91,6 +91,7 @@ jobs:
             ${RELEASE_NOTES:+--release-notes "$RELEASE_NOTES"} \
             ${RELEASE_NOTES_FILE:+--release-notes-file "$RELEASE_NOTES_FILE"} \
             $( (( $INPUT_DEBUG == "true" )) && echo "--debug" )
+
         env:
           INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"
           INPUT_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
