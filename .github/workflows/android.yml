@@ -70,36 +70,17 @@ jobs:
       - name: Verify APK exists
         run: ls -l app/build/outputs/apk/debug/
 
-          # Paso 1: Instalar Firebase CLI
-      - name: Install Firebase CLI
-        run: |
-          curl -sL https://firebase.tools | bash
-
-      # Paso 1: Guardar el archivo JSON de las credenciales en un archivo temporal
-      - name: Set up Firebase credentials
+      - name: Set up Google Cloud credentials
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > /tmp/firebase-service-account.json
-
-      # Paso 2: Imprimir el contenido de las credenciales de manera segura (solo las primeras líneas)
-      - name: Validate Firebase credentials
-        run: |
-          echo "Reading the Firebase service account credentials:"
-          head -n 10 /tmp/firebase-service-account.json  # Imprime solo las primeras 10 líneas para validar
-
-      # Paso 3: Exportar la variable de entorno para las credenciales
-      - name: Export GOOGLE_APPLICATION_CREDENTIALS
-        run: |
           export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
-          echo "GOOGLE_APPLICATION_CREDENTIALS environment variable set."
 
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
 
-      # Subir APK a Firebase App Distribution
       - name: Upload APK to Firebase App Distribution
         run: |
           firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
             --app "1:337628677560:android:6ffd61ca5c79023f273b4d" \
             --groups "testers" \
-            --project "testfirebase-58ff4" \
-            --debug
-            --release-notes "Version: 1.0.0 | Release Notes: prueba" 
-
+            --project "testfirebase-58ff4"
