@@ -76,6 +76,6 @@ jobs:
       - name: Upload APK to Firebase App Distribution
         run: |
           firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-            --app ${{ secrets.FIREBASE_APP_ID }} \
+            --app "testfirebase-58ff4" \
             --groups "testers" \
-            --project ${{ secrets.FIREBASE_PROJECT_ID }}
+            --project "TestFirebase"
