@@ -75,11 +75,22 @@ jobs:
         run: |
           curl -sL https://firebase.tools | bash
 
-      # Autenticación usando la clave de la cuenta de servicio
-      - name: Authenticate with Firebase
+      # Paso 1: Guardar el archivo JSON de las credenciales en un archivo temporal
+      - name: Set up Firebase credentials
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > /tmp/firebase-service-account.json
+
+      # Paso 2: Imprimir el contenido de las credenciales de manera segura (solo las primeras líneas)
+      - name: Validate Firebase credentials
+        run: |
+          echo "Reading the Firebase service account credentials:"
+          head -n 10 /tmp/firebase-service-account.json  # Imprime solo las primeras 10 líneas para validar
+
+      # Paso 3: Exportar la variable de entorno para las credenciales
+      - name: Export GOOGLE_APPLICATION_CREDENTIALS
+        run: |
           export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS environment variable set."
 
 
       # Subir APK a Firebase App Distribution
