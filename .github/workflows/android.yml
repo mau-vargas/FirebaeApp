@@ -70,6 +70,10 @@ jobs:
       - name: Verify APK exists
         run: ls -l app/build/outputs/apk/debug/
 
+      - name: Install project dependencies
+        run: |
+         npm install  # Esto instalará todas las dependencias listadas en package.json
+
           # Paso 1: Instalar Firebase CLI
       # Paso 2: Instalar Firebase CLI
       - name: Install Firebase CLI
