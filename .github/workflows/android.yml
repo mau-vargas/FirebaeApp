@@ -79,54 +79,28 @@ jobs:
           curl -sL https://firebase.tools | bash
           export PATH=$PATH:$HOME/.firebase-tools
 
-      # Paso 4: Subir APK a Firebase App Distribution usando la acción de Firebase
-      #      - name: Upload artifact to Firebase App Distribution
-      #        uses: wzieba/Firebase-Distribution-Github-Action@v1
-
-      #        with:
-      #          appId: 1:337628677560:android:6ffd61ca5c79023f273b4d  # ID de la aplicación de Firebase
-      #          serviceCredentialsFileContent: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}  # Contenido de las credenciales de Firebase
-      #          groups: testers  # Grupo de testers
-      #          file: app/build/outputs/apk/debug/app-debug.apk  # Ruta al APK que deseas subir
-      #          releaseNotes: ${{ inputs.release_notes }}
-
-      #      - name: Distribute APK to Firebase App Distribution
-      #        run: |
-      #          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-      #            --app 1:337628677560:android:6ffd61ca5c79023f273b4d \
-      #            --groups testers \
-      #            --release-notes Test \
-      #            --debug
-
-      # Distribuye el APK en Firebase App Distribution
       - name: Upload Artifact to Firebase App Distribution
         run: |
-          RELEASE_NOTES=""
-          RELEASE_NOTES_FILE=""
-
-
-          # Si se pasa el contenido de las credenciales, configurarlo
-          if [ -n "${INPUT_SERVICECREDENTIALSFILECONTENT}" ] ; then
-              cat <<< "${INPUT_SERVICECREDENTIALSFILECONTENT}" > service_credentials_content.json
+          if [ -n "${INPUT_SERVICE_CREDENTIALS_FILE_CONTENT}" ]; then
+              echo "${INPUT_SERVICE_CREDENTIALS_FILE_CONTENT}" > service_credentials_content.json
               export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
           fi
 
+          RELEASE_NOTES="${INPUT_RELEASE_NOTES:-$(git log -1 --pretty=%B)}"
+          RELEASE_NOTES_FILE="${INPUT_RELEASE_NOTES_FILE:-""}"
 
-          # Distribuir la app
           firebase appdistribution:distribute "$INPUT_FILE" \
-              --app "$INPUT_APPID" \
-              --groups "$INPUT_GROUPS" \
-              --testers "$INPUT_TESTERS" \
-              --release-notes "RELEASE_NOTES" \
-              --release-notes-file "RELEASE_NOTES_FILE" \
-              $( (( $INPUT_DEBUG )) && printf %s '--debug' ) 
-
+            --app "$INPUT_APP_ID" \
+            --groups "$INPUT_GROUPS" \
+            --testers "$INPUT_TESTERS" \
+            ${RELEASE_NOTES:+--release-notes "$RELEASE_NOTES"} \
+            ${RELEASE_NOTES_FILE:+--release-notes-file "$RELEASE_NOTES_FILE"} \
+            $( (( $INPUT_DEBUG == "true" )) && echo "--debug" )
         env:
-          INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"  # Ruta al APK
-          INPUT_APPID: "1:337628677560:android:6ffd61ca5c79023f273b4d"  # ID de la app en Firebase
-          INPUT_GROUPS: "testers"  # Grupo de testers
-          INPUT_RELEASENOTES: "Test"  # Notas de la versión (puedes pasarlas como input)
-          INPUT_SERVICECREDENTIALSFILECONTENT: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"  # Contenido de las credenciales en JSON
-          INPUT_TESTERS: "testers@example.com"  # Lista de testers (opcional)
-          INPUT_DEBUG: "false"  # Depuración (puedes establecerlo a "true" si necesitas más información para depurar)
-
+          INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"
+          INPUT_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
+          INPUT_GROUPS: "testers"
+          INPUT_RELEASE_NOTES: "Test"
+          INPUT_SERVICE_CREDENTIALS_FILE_CONTENT: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"
+          INPUT_TESTERS: "testers@example.com"
+          INPUT_DEBUG: "false"
