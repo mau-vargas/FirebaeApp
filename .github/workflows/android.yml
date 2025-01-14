@@ -83,8 +83,10 @@ jobs:
       # Paso 4: Subir APK a Firebase App Distribution usando la acción de Firebase
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
+
         with:
           appId: 1:337628677560:android:6ffd61ca5c79023f273b4d  # ID de la aplicación de Firebase
           serviceCredentialsFileContent: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}  # Contenido de las credenciales de Firebase
           groups: testers  # Grupo de testers
           file: app/build/outputs/apk/debug/app-debug.apk  # Ruta al APK que deseas subir
+          releaseNotes: ${{ inputs.release_notes }}
