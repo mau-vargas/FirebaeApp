@@ -70,9 +70,13 @@ jobs:
       - name: Verify APK exists
         run: ls -l app/build/outputs/apk/debug/
 
-      - name: Install project dependencies
-        run: |
-         npm install  # Esto instalará todas las dependencias listadas en package.json
+      # Paso 1: Verificar y cambiar al directorio correcto
+      - name: Change to the correct directory
+        run: cd FirebaeApp  # Cambia al directorio donde está el package.json
+
+      # Paso 2: Instalar dependencias
+      - name: Install dependencies
+        run: npm install  # Ahora npm puede encontrar package.json
 
           # Paso 1: Instalar Firebase CLI
       # Paso 2: Instalar Firebase CLI
