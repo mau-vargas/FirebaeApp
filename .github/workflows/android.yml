@@ -93,17 +93,8 @@ jobs:
 
       - name: Distribute APK to Firebase App Distribution
         run: |
-          firebase appdistribution:distribute "$FILE" \
-            --app "$APP_ID" \
-            --groups "$GROUPS" \
-            --release-notes "$RELEASE_NOTES" \
-            ${RELEASE_NOTES_FILE:+ --release-notes-file "${RELEASE_NOTES_FILE}"} \
-            $( (( $DEBUG )) && printf %s '--debug' )
-        env:
-          APP_ID: "1:337628677560:android:6ffd61ca5c79023f273b4d"  # ID de la aplicación de Firebase
-          FILE: "app/build/outputs/apk/debug/app-debug.apk"  # Ruta al APK
-          GROUPS: "testers"  # Grupo de testers
-          RELEASE_NOTES: ${{ inputs.release_notes }}  # Notas de la versión (puedes pasarlas como input)
-          RELEASE_NOTES_FILE: "PRUEBA"  # Archivo de notas de la versión (si se pasa como secreto)
-          DEBUG: "--debug"  # Activa o desactiva el modo de depuración
-          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}  # Credenciales de Firebase
+          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+            --app 1:337628677560:android:6ffd61ca5c79023f273b4d \
+            --groups testers \
+            --release-notes Test \
+            --debug
