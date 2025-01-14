@@ -61,6 +61,9 @@ jobs:
       - name: build debug version
         run: ./gradlew assembleDebug
 
+      - name: Verify APK exists
+        run: ls -l app/build/outputs/apk/debug/
+
           # Paso 1: Instalar Firebase CLI
       - name: Install Firebase CLI
         run: |
@@ -76,6 +79,7 @@ jobs:
       - name: Upload APK to Firebase App Distribution
         run: |
           firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-            --app "1:337628677560:android:6ffd61ca5c79023f273b4d" \ 
+            --app "1:337628677560:android:6ffd61ca5c79023f273b4d" \
             --groups "testers" \
-            --project "testfirebase-58ff4"
+            --project "testfirebase-58ff4" \
+            --debug
