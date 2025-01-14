@@ -70,12 +70,14 @@ jobs:
       - name: Verify APK exists
         run: ls -l app/build/outputs/apk/debug/
 
-      # Paso para configurar las credenciales de Google Cloud
-      - name: Set up Google Cloud credentials
+      - name: Set up Firebase credentials from content
         run: |
-          cat "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > service_credentials_content.json
-          export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
-
+               if [ -n "${{ secrets.INPUT_SERVICECREDENTIALSFILECONTENT }}" ]; then
+               echo "${{ secrets.INPUT_SERVICECREDENTIALSFILECONTENT }}" > service_credentials_content.json
+               export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
+               fi
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       # Instalar Firebase CLI
       - name: Install Firebase CLI
@@ -115,8 +117,6 @@ jobs:
           # Definición de variables
           RELEASE_NOTES=""
           RELEASE_NOTES_FILE=""
-
-
 
 
           # Distribuir la app
