@@ -70,15 +70,6 @@ jobs:
       - name: Verify APK exists
         run: ls -l app/build/outputs/apk/debug/
 
-      - name: Set up Firebase credentials from content
-        run: |
-               if [ -n "${{ secrets.INPUT_SERVICECREDENTIALSFILECONTENT }}" ]; then
-               echo "${{ secrets.INPUT_SERVICECREDENTIALSFILECONTENT }}" > service_credentials_content.json
-               export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
-               fi
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
       # Instalar Firebase CLI
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
@@ -118,7 +109,11 @@ jobs:
           RELEASE_NOTES=""
           RELEASE_NOTES_FILE=""
 
-
+          cat <<< "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > service_credentials_content.json
+          export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
+          
+          
+          
           # Distribuir la app
           firebase appdistribution:distribute "$INPUT_FILE" \
               --app "$INPUT_APPID" \
@@ -133,7 +128,6 @@ jobs:
           INPUT_APPID: "1:337628677560:android:6ffd61ca5c79023f273b4d"  # ID de la app en Firebase
           INPUT_GROUPS: "testers"  # Grupo de testers
           INPUT_RELEASENOTES: "Test"  # Notas de la versión (puedes pasarlas como input)
-          INPUT_SERVICECREDENTIALSFILECONTENT: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"  # Contenido de las credenciales en JSON
           INPUT_TESTERS: "testers@example.com"  # Lista de testers (opcional)
           INPUT_DEBUG: "false"  # Depuración (puedes establecerlo a "true" si necesitas más información para depurar)
 
