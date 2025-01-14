@@ -76,25 +76,17 @@ jobs:
           curl -sL https://firebase.tools | bash
 
       # Autenticación usando la clave de la cuenta de servicio
-#      - name: Authenticate with Firebase
-#        run: |
-#          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > /tmp/firebase-service-account.json
-#          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
+      - name: Authenticate with Firebase
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > /tmp/firebase-service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
 
-      - name: Upload Artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: "1:337628677560:android:6ffd61ca5c79023f273b4d"
-          serviceCredentialsFileContent: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
-          groups: testers
-          file: app/build/outputs/apk/debug/app-debug.apk
-          releaseNotes: ${{ inputs.release_notes }}
 
       # Subir APK a Firebase App Distribution
-#      - name: Upload APK to Firebase App Distribution
-#        run: |
-#          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-#            --app "1:337628677560:android:6ffd61ca5c79023f273b4d" \
-#            --groups "testers" \
-#            --project "testfirebase-58ff4" \
-#            --debug
+      - name: Upload APK to Firebase App Distribution
+        run: |
+          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+            --app "1:337628677560:android:6ffd61ca5c79023f273b4d" \
+            --groups "testers" \
+            --project "testfirebase-58ff4" \
+            --debug
