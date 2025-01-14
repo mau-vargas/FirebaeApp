@@ -118,17 +118,6 @@ jobs:
 
           TOKEN_DEPRECATED_WARNING_MESSAGE="⚠ This action will stop working with the next future major version of firebase-tools! Migrate to Service Account. See more: https://github.com/wzieba/Firebase-Distribution-Github-Action/wiki/FIREBASE_TOKEN-migration"
 
-          # Configurar notas de la versión
-          if [[ -z ${INPUT_RELEASENOTES} ]]; then
-              RELEASE_NOTES="$(git log -1 --pretty=short)"
-          else
-              RELEASE_NOTES=${INPUT_RELEASENOTES}
-          fi
-
-          if [[ ${INPUT_RELEASENOTESFILE} ]]; then
-              RELEASE_NOTES=""
-              RELEASE_NOTES_FILE=${INPUT_RELEASENOTESFILE}
-          fi
 
           # Si se pasa un archivo de credenciales, configurarlo
           if [ -n "${INPUT_SERVICECREDENTIALSFILE}" ] ; then
@@ -153,7 +142,7 @@ jobs:
               --groups "$INPUT_GROUPS" \
               --testers "$INPUT_TESTERS" \
               --release-notes "RELEASE_NOTES" \
-              ${INPUT_RELEASENOTESFILE:+ --release-notes-file "${RELEASE_NOTES_FILE}"} \
+              --release-notes-file "RELEASE_NOTES_FILE" \
               $( (( $INPUT_DEBUG )) && printf %s '--debug' ) |
           {
               while read -r line; do
