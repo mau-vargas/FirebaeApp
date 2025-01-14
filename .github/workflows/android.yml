@@ -61,6 +61,11 @@ jobs:
       - name: build debug version
         run: ./gradlew assembleDebug
 
+          # Paso 1: Instalar Firebase CLI
+      - name: Install Firebase CLI
+        run: |
+          curl -sL https://firebase.tools | bash
+
       # Autenticación usando la clave de la cuenta de servicio
       - name: Authenticate with Firebase
         run: |
