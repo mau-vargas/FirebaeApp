@@ -101,3 +101,5 @@ jobs:
             --groups "testers" \
             --project "testfirebase-58ff4" \
             --debug
+            --release-notes "Version: 1.0.0 | Release Notes: prueba" 
+
