@@ -116,6 +116,13 @@ jobs:
           RELEASE_NOTES_FILE=""
 
 
+          # Si se pasa el contenido de las credenciales, configurarlo
+          if [ -n "${INPUT_SERVICECREDENTIALSFILECONTENT}" ] ; then
+              cat <<< "${INPUT_SERVICECREDENTIALSFILECONTENT}" > service_credentials_content.json
+              export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
+          fi
+
+
           # Distribuir la app
           firebase appdistribution:distribute "$INPUT_FILE" \
               --app "$INPUT_APPID" \
