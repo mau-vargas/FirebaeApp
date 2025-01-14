@@ -143,7 +143,7 @@ jobs:
               --testers "$INPUT_TESTERS" \
               --release-notes "RELEASE_NOTES" \
               --release-notes-file "RELEASE_NOTES_FILE" \
-              $( (( $INPUT_DEBUG )) && printf %s '--debug' ) |
+              $( (( $INPUT_DEBUG )) && printf %s '--debug' ) 
 
         env:
           INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"  # Ruta al APK
