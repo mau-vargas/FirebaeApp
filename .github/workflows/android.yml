@@ -99,3 +99,34 @@ jobs:
       #            --release-notes Test \
       #            --debug
 
+      - name: Distribute APK to Firebase App Distribution
+        run: |
+          INPUT_FILE="app/build/outputs/apk/debug/app-debug.apk"  # Ruta del archivo APK
+          INPUT_APPID="1:337628677560:android:6ffd61ca5c79023f273b4d"  # ID de la app de Firebase
+          INPUT_GROUPS="testers"  # Nombre del grupo de testers
+          INPUT_TESTERS="tester1@example.com,tester2@example.com"  # Correos electrónicos de testers
+          RELEASE_NOTES="Este es un lanzamiento de prueba para la versión 1.0.0"  # Notas de la versión
+
+          firebase appdistribution:distribute \
+            "$INPUT_FILE" \
+            --app "$INPUT_APPID" \
+            --groups "$INPUT_GROUPS" \
+            --testers "$INPUT_TESTERS" \
+            --release-notes "$RELEASE_NOTES" \
+            --debug |
+          {
+            while read -r line; do
+              echo $line
+
+              if [[ $line == *"View this release in the Firebase console"* ]]; then
+                CONSOLE_URI=$(echo "$line" | sed -e 's/.*: //' -e 's/^ *//;s/ *$//')
+                echo "FIREBASE_CONSOLE_URI=$CONSOLE_URI" >> "$GITHUB_ENV"
+              elif [[ $line == *"Share this release with testers who have access"* ]]; then
+                TESTING_URI=$(echo "$line" | sed -e 's/.*: //' -e 's/^ *//;s/ *$//')
+                echo "TESTING_URI=$TESTING_URI" >> "$GITHUB_ENV"
+              elif [[ $line == *"Download the release binary"* ]]; then
+                BINARY_URI=$(echo "$line" | sed -e 's/.*: //' -e 's/^ *//;s/ *$//')
+                echo "BINARY_DOWNLOAD_URI=$BINARY_URI" >> "$GITHUB_ENV"
+              fi
+            done
+          }
