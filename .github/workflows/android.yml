@@ -80,24 +80,29 @@ jobs:
             export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
           fi
 
+      - name: Get release notes
+        id: get_release_notes
+        run: |
+          if [ -n "${{ github.event.inputs.release_notes }}" ]; then
+            echo "RELEASE_NOTES=${{ github.event.inputs.release_notes }}" >> $GITHUB_ENV
+          else
+            RELEASE_NOTES=$(git log -1 --pretty=%B)
+            echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+          fi
+
       - name: Upload Artifact to Firebase App Distribution
         run: |
-          # Obtener las notas de la versión de la entrada o del último commit
-          RELEASE_NOTES="${{ github.event.inputs.release_notes || $(git log -1 --pretty=%B) }}"
-          RELEASE_NOTES_FILE="${{ github.event.inputs.release_notes_file || "" }}"
-          
           firebase appdistribution:distribute "$INPUT_FILE" \
             --app "$INPUT_APP_ID" \
             --groups "$INPUT_GROUPS" \
             --testers "$INPUT_TESTERS" \
             ${RELEASE_NOTES:+--release-notes "$RELEASE_NOTES"} \
-            ${RELEASE_NOTES_FILE:+--release-notes-file "$RELEASE_NOTES_FILE"} \
             $( (( $INPUT_DEBUG == "true" )) && echo "--debug" )
         env:
           INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"
           INPUT_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
           INPUT_GROUPS: "testers"
           INPUT_TESTERS: "tester1@example.com,tester2@example.com" # Testers
-          INPUT_RELEASE_NOTES: "Test release"
+          RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
           INPUT_DEBUG: "false"
           FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"  # Usar Firebase Token desde los secrets
