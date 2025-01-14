@@ -73,7 +73,7 @@ jobs:
       # Paso para configurar las credenciales de Google Cloud
       - name: Set up Google Cloud credentials
         run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > service_credentials_content.json
+          cat "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > service_credentials_content.json
           export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
 
 
@@ -115,6 +115,8 @@ jobs:
           # Definición de variables
           RELEASE_NOTES=""
           RELEASE_NOTES_FILE=""
+
+
 
 
           # Distribuir la app
