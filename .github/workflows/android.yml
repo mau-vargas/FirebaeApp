@@ -95,6 +95,6 @@ jobs:
           INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"
           INPUT_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
           INPUT_GROUPS: "testers"
-          INPUT_RELEASE_NOTES: "Test"
+          INPUT_RELEASE_NOTES: ""
           INPUT_SERVICE_CREDENTIALS_FILE_CONTENT: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"
           INPUT_DEBUG: "false"
