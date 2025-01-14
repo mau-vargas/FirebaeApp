@@ -61,17 +61,16 @@ jobs:
       - name: build debug version
         run: ./gradlew assembleDebug
 
-      # Paso 3: Instalar Firebase CLI
-      - name: Install Firebase CLI
+      # Autenticación usando la clave de la cuenta de servicio
+      - name: Authenticate with Firebase
         run: |
-          curl -sL https://firebase.tools | bash
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > /tmp/firebase-service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/firebase-service-account.json"
 
-
+      # Subir APK a Firebase App Distribution
       - name: Upload APK to Firebase App Distribution
         run: |
-         firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-         --app "TestFirebase" \
-         --groups "testers" \
-         --token ${{ secrets.FIREBASE_TOKEN }} \
-         --project "testfirebase-58ff4"
-
+          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+            --app ${{ secrets.FIREBASE_APP_ID }} \
+            --groups "testers" \
+            --project ${{ secrets.FIREBASE_PROJECT_ID }}
