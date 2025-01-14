@@ -91,13 +91,13 @@ jobs:
       #          file: app/build/outputs/apk/debug/app-debug.apk  # Ruta al APK que deseas subir
       #          releaseNotes: ${{ inputs.release_notes }}
 
-      - name: Distribute APK to Firebase App Distribution
-        run: |
-          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
-            --app 1:337628677560:android:6ffd61ca5c79023f273b4d \
-            --groups testers \
-            --release-notes Test \
-            --debug
+#      - name: Distribute APK to Firebase App Distribution
+#        run: |
+#          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+#            --app 1:337628677560:android:6ffd61ca5c79023f273b4d \
+#            --groups testers \
+#            --release-notes Test \
+#            --debug
 
       - name: Distribute APK to Firebase App Distribution
         run: |
