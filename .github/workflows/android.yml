@@ -67,10 +67,6 @@ jobs:
       - name: build debug version
         run: ./gradlew assembleDebug
 
-      - name: Verify APK exists
-        run: ls -l app/build/outputs/apk/debug/
-
-      # Instalar Firebase CLI
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
@@ -92,7 +88,6 @@ jobs:
           firebase appdistribution:distribute "$INPUT_FILE" \
             --app "$INPUT_APP_ID" \
             --groups "$INPUT_GROUPS" \
-            --testers "$INPUT_TESTERS" \
             ${RELEASE_NOTES:+--release-notes "$RELEASE_NOTES"} \
             ${RELEASE_NOTES_FILE:+--release-notes-file "$RELEASE_NOTES_FILE"} \
             $( (( $INPUT_DEBUG == "true" )) && echo "--debug" )
@@ -102,5 +97,4 @@ jobs:
           INPUT_GROUPS: "testers"
           INPUT_RELEASE_NOTES: "Test"
           INPUT_SERVICE_CREDENTIALS_FILE_CONTENT: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"
-          INPUT_TESTERS: "testers@example.com"
           INPUT_DEBUG: "false"
