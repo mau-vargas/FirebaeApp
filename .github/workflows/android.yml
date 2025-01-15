@@ -79,6 +79,11 @@ jobs:
         run: |
           RELEASE_NOTES="${INPUT_RELEASE_NOTES:-$(git log -1 --pretty=%B)}"
           RELEASE_NOTES_FILE="${INPUT_RELEASE_NOTES_FILE:-""}"
+          
+          if [ -n "${INPUT_TOKEN}" ] ; then
+            echo ${TOKEN_DEPRECATED_WARNING_MESSAGE}
+            export FIREBASE_TOKEN="${INPUT_TOKEN}"
+          fi
 
           firebase appdistribution:distribute "$INPUT_FILE" \
             --app "$INPUT_APP_ID" \
@@ -93,4 +98,5 @@ jobs:
           INPUT_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
           INPUT_GROUPS: "testers"
           INPUT_RELEASE_NOTES: ""
+          INPUT_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
           INPUT_DEBUG: "false"
