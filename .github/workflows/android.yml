@@ -77,11 +77,6 @@ jobs:
 
       - name: Upload Artifact to Firebase App Distribution
         run: |
-          if [ -n "${INPUT_SERVICE_CREDENTIALS_FILE_CONTENT}" ]; then
-              echo "${INPUT_SERVICE_CREDENTIALS_FILE_CONTENT}" > service_credentials_content.json
-              export GOOGLE_APPLICATION_CREDENTIALS="service_credentials_content.json"
-          fi
-
           RELEASE_NOTES="${INPUT_RELEASE_NOTES:-$(git log -1 --pretty=%B)}"
           RELEASE_NOTES_FILE="${INPUT_RELEASE_NOTES_FILE:-""}"
 
@@ -90,12 +85,12 @@ jobs:
             --groups "$INPUT_GROUPS" \
             ${RELEASE_NOTES:+--release-notes "$RELEASE_NOTES"} \
             ${RELEASE_NOTES_FILE:+--release-notes-file "$RELEASE_NOTES_FILE"} \
-            $( (( $INPUT_DEBUG == "true" )) && echo "--debug" )
+            $( (( $INPUT_DEBUG == "true" )) && echo "--debug" ) \
+            --token "$FIREBASE_TOKEN"
 
         env:
           INPUT_FILE: "app/build/outputs/apk/debug/app-debug.apk"
           INPUT_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
           INPUT_GROUPS: "testers"
           INPUT_RELEASE_NOTES: ""
-          INPUT_SERVICE_CREDENTIALS_FILE_CONTENT: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"
           INPUT_DEBUG: "false"
